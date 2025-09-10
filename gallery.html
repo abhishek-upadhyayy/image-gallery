@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task 1 - Image Gallery</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f4f4f9;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .filter-btns {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .filter-btns button {
+      margin: 5px;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      background: #667eea;
+      color: white;
+      cursor: pointer;
+    }
+    .filter-btns button:hover {
+      background: #764ba2;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    .gallery img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .gallery img:hover {
+      transform: scale(1.05);
+    }
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .lightbox img {
+      max-width: 90%;
+      max-height: 70vh;
+      border-radius: 10px;
+    }
+    .lightbox .caption {
+      margin-top: 10px;
+      color: #fff;
+      font-size: 18px;
+    }
+    .lightbox .controls {
+      margin-top: 15px;
+    }
+    .lightbox button {
+      margin: 0 10px;
+      padding: 10px 15px;
+      background: #667eea;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+    .lightbox button:hover {
+      background: #764ba2;
+    }
+  </style>
+</head>
+<body>
+  <h1>Image Gallery</h1>
+
+  <div class="filter-btns">
+    <button onclick="filterSelection('all')">All</button>
+    <button onclick="filterSelection('nature')">Nature</button>
+    <button onclick="filterSelection('city')">City</button>
+    <button onclick="filterSelection('animals')">Animals</button>
+  </div>
+
+  <div class="gallery" id="gallery">
+    <img src="https://source.unsplash.com/400x300/?nature,water" alt="Nature" class="nature">
+    <img src="https://source.unsplash.com/400x300/?nature,forest" alt="Nature" class="nature">
+    <img src="https://source.unsplash.com/400x300/?city,night" alt="City" class="city">
+    <img src="https://source.unsplash.com/400x300/?city,buildings" alt="City" class="city">
+    <img src="https://source.unsplash.com/400x300/?animals,dog" alt="Animals" class="animals">
+    <img src="https://source.unsplash.com/400x300/?animals,cat" alt="Animals" class="animals">
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <img id="lightbox-img" src="" alt="">
+    <div class="caption" id="caption"></div>
+    <div class="controls">
+      <button onclick="prevImage()">⏮ Prev</button>
+      <button onclick="closeLightbox()">❌ Close</button>
+      <button onclick="nextImage()">Next ⏭</button>
+    </div>
+  </div>
+
+  <script>
+    const galleryImages = document.querySelectorAll('.gallery img');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const caption = document.getElementById('caption');
+    let currentIndex = 0;
+
+    galleryImages.forEach((img, index) => {
+      img.addEventListener('click', () => {
+        lightbox.style.display = 'flex';
+        lightboxImg.src = img.src;
+        caption.textContent = img.alt;
+        currentIndex = index;
+      });
+    });
+
+    function closeLightbox() {
+      lightbox.style.display = 'none';
+    }
+
+    function prevImage() {
+      currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+      lightboxImg.src = galleryImages[currentIndex].src;
+      caption.textContent = galleryImages[currentIndex].alt;
+    }
+
+    function nextImage() {
+      currentIndex = (currentIndex + 1) % galleryImages.length;
+      lightboxImg.src = galleryImages[currentIndex].src;
+      caption.textContent = galleryImages[currentIndex].alt;
+    }
+
+    function filterSelection(category) {
+      galleryImages.forEach(img => {
+        img.style.display = (category === 'all' || img.classList.contains(category)) ? 'block' : 'none';
+      });
+    }
+
+    // Keyboard support
+    document.addEventListener('keydown', (e) => {
+      if (lightbox.style.display === 'flex') {
+        if (e.key === 'ArrowRight') nextImage();
+        if (e.key === 'ArrowLeft') prevImage();
+        if (e.key === 'Escape') closeLightbox();
+      }
+    });
+  </script>
+</body>
+</html>
